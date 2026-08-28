@@ -12,8 +12,18 @@ import {
   IconTimer,
   IconMic,
 } from "../components/icons";
+import { EmblemUnn } from "../components/emblem";
 
 export const TOTAL_SLIDES = 15;
+
+/* перекладка акцентных цветов на фирменную палитру ННГУ */
+const BRAND_HEX: Record<string, string> = {
+  "#f2a93b": "#003DA6", // фирменный синий
+  "#43c6ae": "#0087C8", // фирменный голубой
+  "#8ca0b4": "#7E93AC", // серый
+  "#f0654f": "#D64541", // сигнальный красный
+};
+export const brand = (c?: string) => (c ? (BRAND_HEX[c.toUpperCase()] ?? c) : c);
 
 /* ================= shared frame ================= */
 
@@ -25,54 +35,69 @@ type FrameProps = {
   ghost?: string;
 };
 
-export function SlideFrame({ index, kicker, accent = "#f2a93b", children, ghost }: FrameProps) {
+export function SlideFrame({ index, kicker, accent = "#003DA6", children, ghost }: FrameProps) {
   const num = String(index).padStart(2, "0");
+  const acc = brand(accent);
   return (
     <div className="slide-frame w-[1920px] h-[1080px] overflow-hidden font-body text-paper">
-      <span className="corner-tick tl" style={{ ["--tick-color" as string]: accent }} />
-      <span className="corner-tick tr" style={{ ["--tick-color" as string]: accent }} />
-      <span className="corner-tick bl" style={{ ["--tick-color" as string]: accent }} />
-      <span className="corner-tick br" style={{ ["--tick-color" as string]: accent }} />
+      <span className="corner-tick tl" style={{ ["--tick-color" as string]: acc }} />
+      <span className="corner-tick tr" style={{ ["--tick-color" as string]: acc }} />
+      <span className="corner-tick bl" style={{ ["--tick-color" as string]: acc }} />
+      <span className="corner-tick br" style={{ ["--tick-color" as string]: acc }} />
 
       {/* ghost number */}
       <div
         aria-hidden
         className="absolute -right-6 -top-16 font-display font-extrabold select-none"
-        style={{ fontSize: 340, lineHeight: 1, color: "rgba(232,237,243,0.035)" }}
+        style={{ fontSize: 340, lineHeight: 1, color: "rgba(0,61,166,0.055)" }}
       >
         {ghost ?? num}
       </div>
 
-      {/* header row */}
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-16 pt-10">
-        <div className="anim-left flex items-center gap-4 font-mono text-[15px] tracking-[0.22em] uppercase text-muted">
-          <span className="inline-block w-8 h-[2px]" style={{ background: accent }} />
-          <span>{kicker}</span>
+      {/* header row: бренд университета + раздел */}
+      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-16 pt-11">
+        <div className="anim-left flex items-center gap-5">
+          <EmblemUnn className="w-[46px] h-[46px]" />
+          <div className="leading-none">
+            <div className="font-display font-bold uppercase text-[17px] tracking-[0.08em] text-amber">
+              Университет Лобачевского
+            </div>
+            <div className="font-mono text-[11.5px] tracking-[0.18em] uppercase text-dim mt-2">
+              ННГУ им. Н. И. Лобачевского
+            </div>
+          </div>
         </div>
-        <div className="anim-rise font-mono text-[15px] tracking-[0.22em] text-dim">
-          {num} / {TOTAL_SLIDES}
+        <div className="anim-rise flex items-center gap-7">
+          <div className="font-mono text-[14px] tracking-[0.2em] uppercase text-muted flex items-center gap-3">
+            <span className="inline-block w-8 h-[2px]" style={{ background: acc }} />
+            <span>{kicker}</span>
+          </div>
+          <div className="font-mono text-[14px] tracking-[0.2em] text-dim border-l border-line pl-7">
+            {num} / {TOTAL_SLIDES}
+          </div>
         </div>
       </div>
 
-      <div className="absolute inset-0 px-16 pt-28 pb-16">{children}</div>
+      <div className="absolute inset-0 px-16 pt-[130px] pb-16">{children}</div>
 
       {/* footer row */}
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-16 pb-7 font-mono text-[13px] tracking-[0.18em] uppercase text-dim">
-        <span>ETICA · Этика ИИ в медиа</span>
+        <span>Этика ИИ в медиа · ETICA</span>
         <span className="flex items-center gap-3">
-          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: accent }} />
+          <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: acc }} />
           Генеративный ИИ в рекламе
         </span>
-        <span>ННГУ им. Н.И. Лобачевского</span>
+        <span>unn.ru</span>
       </div>
     </div>
   );
 }
 
-export function Kicker({ children, color = "#f2a93b" }: { children: React.ReactNode; color?: string }) {
+export function Kicker({ children, color = "#003DA6" }: { children: React.ReactNode; color?: string }) {
+  const c = brand(color);
   return (
     <div className="font-mono text-[16px] tracking-[0.24em] uppercase text-muted flex items-center gap-3">
-      <span className="inline-block w-2 h-2" style={{ background: color }} />
+      <span className="inline-block w-2 h-2" style={{ background: c }} />
       {children}
     </div>
   );
@@ -99,13 +124,14 @@ export function Display({
   );
 }
 
-export function Mark({ text, color = "#f2a93b" }: { text: string; color?: string }) {
+export function Mark({ text, color = "#003DA6" }: { text: string; color?: string }) {
+  const c = brand(color);
   return (
-    <span className="relative inline-block px-2 -mx-1" style={{ color }}>
+    <span className="relative inline-block px-2 -mx-1" style={{ color: c }}>
       {text}
       <span
         className="absolute left-0 right-0 bottom-[6%] h-[0.16em] -z-10"
-        style={{ background: `${color}33` }}
+        style={{ background: `${c}2e` }}
       />
     </span>
   );
@@ -114,7 +140,7 @@ export function Mark({ text, color = "#f2a93b" }: { text: string; color?: string
 export function Bullet({
   children,
   d = 0,
-  color = "#f2a93b",
+  color = "#003DA6",
   bold,
 }: {
   children: React.ReactNode;
@@ -122,9 +148,10 @@ export function Bullet({
   color?: string;
   bold?: React.ReactNode;
 }) {
+  const c = brand(color);
   return (
     <div className="anim-left flex items-start gap-5" style={{ ["--d" as string]: `${d}ms` }}>
-      <span className="mt-[13px] inline-block w-[14px] h-[3px] shrink-0" style={{ background: color }} />
+      <span className="mt-[13px] inline-block w-[14px] h-[3px] shrink-0" style={{ background: c }} />
       <p className="text-[24px] leading-[1.5] text-paper/90">
         {bold ? (
           <>
@@ -141,21 +168,22 @@ export function Bullet({
 
 export function Chip({
   children,
-  color = "#8ca0b4",
+  color = "#7E93AC",
   d = 0,
 }: {
   children: React.ReactNode;
   color?: string;
   d?: number;
 }) {
+  const c = brand(color);
   return (
     <span
       className="anim-pop inline-flex items-center gap-2 px-4 py-2 border font-mono text-[15px] tracking-wider uppercase"
       style={{
         ["--d" as string]: `${d}ms`,
-        borderColor: `${color}55`,
-        color,
-        background: `${color}0f`,
+        borderColor: `${c}55`,
+        color: c,
+        background: `${c}12`,
       }}
     >
       {children}
@@ -186,27 +214,27 @@ function NeuralSeal() {
   return (
     <div className="relative w-[560px] h-[560px]">
       <svg className="absolute inset-0 spin-slow" viewBox="0 0 560 560" fill="none">
-        <circle cx="280" cy="280" r="266" stroke="#24364b" strokeWidth="1.5" strokeDasharray="4 10" />
-        <circle cx="280" cy="280" r="218" stroke="#f2a93b" strokeOpacity="0.5" strokeWidth="1.5" strokeDasharray="90 40 20 40" />
-        <circle cx="280" cy="14" r="7" fill="#f2a93b" />
-        <circle cx="280" cy="498" r="5" fill="#43c6ae" />
+        <circle cx="280" cy="280" r="266" stroke="#C7D7E9" strokeWidth="1.5" strokeDasharray="4 10" />
+        <circle cx="280" cy="280" r="218" stroke="#003DA6" strokeOpacity="0.5" strokeWidth="1.5" strokeDasharray="90 40 20 40" />
+        <circle cx="280" cy="14" r="7" fill="#003DA6" />
+        <circle cx="280" cy="498" r="5" fill="#0087C8" />
       </svg>
       <svg className="absolute inset-0 spin-slow-rev" viewBox="0 0 560 560" fill="none">
-        <circle cx="280" cy="280" r="170" stroke="#43c6ae" strokeOpacity="0.45" strokeWidth="1.5" strokeDasharray="30 22" />
-        <circle cx="110" cy="280" r="5" fill="#43c6ae" />
-        <circle cx="450" cy="280" r="6" fill="#f0654f" />
+        <circle cx="280" cy="280" r="170" stroke="#0087C8" strokeOpacity="0.5" strokeWidth="1.5" strokeDasharray="30 22" />
+        <circle cx="110" cy="280" r="5" fill="#0087C8" />
+        <circle cx="450" cy="280" r="6" fill="#D64541" />
       </svg>
       <svg className="absolute inset-0" viewBox="0 0 560 560" fill="none">
-        <circle cx="280" cy="280" r="112" stroke="#24364b" strokeWidth="1.5" />
-        <path className="dash-flow" d="M280 168v224M168 280h224M201 201l158 158M359 201L201 359" stroke="#8ca0b4" strokeOpacity="0.35" strokeWidth="1.2" />
-        <circle cx="280" cy="280" r="46" fill="#0c141d" stroke="#f2a93b" strokeWidth="2" />
-        <text x="280" y="296" textAnchor="middle" fill="#f2a93b" fontFamily="Unbounded, sans-serif" fontSize="34" fontWeight="700">
+        <circle cx="280" cy="280" r="112" stroke="#C7D7E9" strokeWidth="1.5" />
+        <path className="dash-flow" d="M280 168v224M168 280h224M201 201l158 158M359 201L201 359" stroke="#7E93AC" strokeOpacity="0.4" strokeWidth="1.2" />
+        <circle cx="280" cy="280" r="46" fill="#003DA6" stroke="#0B2D5C" strokeWidth="2" />
+        <text x="280" y="296" textAnchor="middle" fill="#FFFFFF" fontFamily="Unbounded, sans-serif" fontSize="34" fontWeight="700">
           ИИ
         </text>
-        <circle cx="280" cy="168" r="8" fill="#f0654f" />
-        <circle cx="392" cy="280" r="8" fill="#f2a93b" />
-        <circle cx="280" cy="392" r="8" fill="#43c6ae" />
-        <circle cx="168" cy="280" r="8" fill="#8ca0b4" />
+        <circle cx="280" cy="168" r="8" fill="#D64541" />
+        <circle cx="392" cy="280" r="8" fill="#003DA6" />
+        <circle cx="280" cy="392" r="8" fill="#0087C8" />
+        <circle cx="168" cy="280" r="8" fill="#7E93AC" />
       </svg>
       <div className="absolute -left-10 top-16 floaty">
         <Chip color="#f0654f">deepfake</Chip>
@@ -230,7 +258,7 @@ export function SlideTitle() {
       <div className="flex h-full items-center gap-16">
         <div className="flex-1 min-w-0">
           <div className="anim-left" style={{ ["--d" as string]: "0ms" }}>
-            <Kicker>ETICA · Центр применения ИИ в журналистике и МК</Kicker>
+            <Kicker>Университет Лобачевского · Центр применения ИИ в журналистике и МК</Kicker>
           </div>
           <h1
             className="anim-rise font-display font-extrabold uppercase leading-[1.02] tracking-tight mt-8"
@@ -259,7 +287,14 @@ export function SlideTitle() {
             </Chip>
           </div>
 
-          <div className="anim-rise mt-10 pt-8 border-t border-line/70 grid grid-cols-2 gap-8 max-w-[820px]" style={{ ["--d" as string]: "480ms" }}>
+          <div className="anim-rise flex items-center gap-4 mt-10" style={{ ["--d" as string]: "430ms" }}>
+            <EmblemUnn className="w-9 h-9" />
+            <span className="font-mono text-[14px] tracking-[0.18em] uppercase text-dim">
+              ННГУ им. Н. И. Лобачевского · Национальный исследовательский университет
+            </span>
+          </div>
+
+          <div className="anim-rise mt-6 pt-7 border-t border-line/70 grid grid-cols-2 gap-8 max-w-[820px]" style={{ ["--d" as string]: "520ms" }}>
             <div>
               <div className="font-mono text-[13px] tracking-[0.22em] uppercase text-dim">Спикер 01</div>
               <div className="text-[22px] font-semibold mt-2">Макарова Людмила Сергеевна</div>
@@ -362,7 +397,7 @@ export function SlideAgenda() {
               title="AUTOFACTCHECK: правда по алгоритму — прикладной ИИ в медиа"
               speaker="Макарова Людмила Сергеевна · Центр применения ИИ в журналистике и МК ННГУ"
               note="прикладной инструмент"
-              color="#f2a93b"
+              color="#003DA6"
               d={150}
             />
             <AgendaRow
@@ -371,7 +406,7 @@ export function SlideAgenda() {
               title="Этика ИИ в медиа: грань между риском и прогрессом"
               speaker="Померанцев Илья Валерьевич · Центр ИИ ННГУ, Комиссия по реализации кодекса этики Альянса ИИ в РФ"
               note="этическая рамка"
-              color="#43c6ae"
+              color="#0087C8"
               d={300}
             />
             <AgendaRow
@@ -380,7 +415,7 @@ export function SlideAgenda() {
               title="Дискуссия и вопросы аудитории"
               speaker="Оба спикера · открытая сессия"
               note="Q&A"
-              color="#f0654f"
+              color="#D64541"
               d={450}
               last
             />
@@ -388,17 +423,17 @@ export function SlideAgenda() {
         </div>
         <div className="anim-rise w-[380px] shrink-0 flex flex-col justify-center" style={{ ["--d" as string]: "500ms" }}>
           <div className="border border-line bg-ink3/60 p-10 relative">
-            <span className="corner-tick tl" style={{ ["--tick-color" as string]: "#43c6ae" }} />
-            <span className="corner-tick br" style={{ ["--tick-color" as string]: "#43c6ae" }} />
+            <span className="corner-tick tl" style={{ ["--tick-color" as string]: "#0087C8" }} />
+            <span className="corner-tick br" style={{ ["--tick-color" as string]: "#0087C8" }} />
             <div className="font-mono text-[14px] tracking-[0.22em] uppercase text-dim">Тайминг</div>
             <div className="font-display font-extrabold text-[96px] leading-none mt-4 text-teal">
               15–20<span className="text-[40px] align-top ml-2">мин</span>
             </div>
             <div className="mt-8 space-y-4">
               {[
-                ["Доклад 01", "40%", "#f2a93b"],
-                ["Доклад 02", "40%", "#43c6ae"],
-                ["Q&A", "20%", "#f0654f"],
+                ["Доклад 01", "40%", "#003DA6"],
+                ["Доклад 02", "40%", "#0087C8"],
+                ["Q&A", "20%", "#D64541"],
               ].map(([label, w, c]) => (
                 <div key={label}>
                   <div className="flex justify-between font-mono text-[14px] uppercase tracking-wider text-muted mb-2">
@@ -461,10 +496,10 @@ export function SlideNumbers() {
         быстрее всего проявляются этические сбои.
       </p>
       <div className="grid grid-cols-4 gap-7 mt-14">
-        <StatBlock value="72" suffix="%" label="маркетологов в мире уже применяют генеративный ИИ в рабочих процессах" src="опросы HubSpot / Statista, 2024–25" color="#f2a93b" d={200} />
-        <StatBlock value="×10" label="рост инцидентов мошенничества с дипфейками за 2022–2024 годы" src="Sumsub, Deloitte (оценки)" color="#f0654f" d={320} />
-        <StatBlock value="30" suffix="%" label="ежегодный прирост рынка рекламы, создаваемой с помощью GenAI" src="отраслевые оценки, 2025" color="#43c6ae" d={440} />
-        <StatBlock value="2026" label="вступают в силу нормы прозрачности EU AI Act для синтетического контента" src="EU AI Act, ст. 50" color="#8ca0b4" d={560} />
+        <StatBlock value="72" suffix="%" label="маркетологов в мире уже применяют генеративный ИИ в рабочих процессах" src="опросы HubSpot / Statista, 2024–25" color="#003DA6" d={200} />
+        <StatBlock value="×10" label="рост инцидентов мошенничества с дипфейками за 2022–2024 годы" src="Sumsub, Deloitte (оценки)" color="#D64541" d={320} />
+        <StatBlock value="30" suffix="%" label="ежегодный прирост рынка рекламы, создаваемой с помощью GenAI" src="отраслевые оценки, 2025" color="#0087C8" d={440} />
+        <StatBlock value="2026" label="вступают в силу нормы прозрачности EU AI Act для синтетического контента" src="EU AI Act, ст. 50" color="#7E93AC" d={560} />
       </div>
       <div className="anim-rise mt-10 flex items-center gap-4 text-[17px] text-dim font-mono tracking-wider" style={{ ["--d" as string]: "700ms" }}>
         <span className="inline-block w-8 h-[2px] bg-coral" />
@@ -492,11 +527,11 @@ function PipelineNode({ label, sub, color, d, wide = false }: { label: string; s
 }
 
 const modalities = [
-  { t: "Текст", d: "слоганы, сценарии роликов, посты, email-цепочки", c: "#f2a93b" },
-  { t: "Изображения", d: "баннеры, продуктовые сцены, key visual под каждый сегмент", c: "#f2a93b" },
-  { t: "Видео и звук", d: "клипы, озвучка, джинглы, голос бренда без студии", c: "#f0654f" },
-  { t: "Синтетические персоны", d: "виртуальные инфлюенсеры и цифровые двойники звёзд", c: "#f0654f" },
-  { t: "Гиперперсонализация", d: "тысячи версий креатива — поведенческие триггеры для каждого сегмента", c: "#43c6ae" },
+  { t: "Текст", d: "слоганы, сценарии роликов, посты, email-цепочки", c: "#003DA6" },
+  { t: "Изображения", d: "баннеры, продуктовые сцены, key visual под каждый сегмент", c: "#003DA6" },
+  { t: "Видео и звук", d: "клипы, озвучка, джинглы, голос бренда без студии", c: "#D64541" },
+  { t: "Синтетические персоны", d: "виртуальные инфлюенсеры и цифровые двойники звёзд", c: "#D64541" },
+  { t: "Гиперперсонализация", d: "тысячи версий креатива — поведенческие триггеры для каждого сегмента", c: "#0087C8" },
 ];
 
 export function SlideCapabilities() {
@@ -506,15 +541,15 @@ export function SlideCapabilities() {
         От брифа до тысячи креативов — <span className="text-amber">за минуты</span>
       </Display>
       <div className="anim-rise mt-12 flex items-center justify-center gap-6" style={{ ["--d" as string]: "150ms" }}>
-        <PipelineNode label="Бриф" sub="цель, аудитория, tone of voice" color="#8ca0b4" d={180} />
+        <PipelineNode label="Бриф" sub="цель, аудитория, tone of voice" color="#7E93AC" d={180} />
         <svg width="130" height="24" className="shrink-0">
-          <line className="dash-flow" x1="0" y1="12" x2="130" y2="12" stroke="#f2a93b" strokeWidth="2.4" />
+          <line className="dash-flow" x1="0" y1="12" x2="130" y2="12" stroke="#003DA6" strokeWidth="2.4" />
         </svg>
-        <PipelineNode label="Генеративная модель" sub="LLM · диффузия · video / voice" color="#f2a93b" d={300} />
+        <PipelineNode label="Генеративная модель" sub="LLM · диффузия · video / voice" color="#003DA6" d={300} />
         <svg width="130" height="24" className="shrink-0">
-          <line className="dash-flow" x1="0" y1="12" x2="130" y2="12" stroke="#43c6ae" strokeWidth="2.4" />
+          <line className="dash-flow" x1="0" y1="12" x2="130" y2="12" stroke="#0087C8" strokeWidth="2.4" />
         </svg>
-        <PipelineNode label="Креативы ×1000" sub="версии под сегменты и площадки" color="#43c6ae" d={420} />
+        <PipelineNode label="Креативы ×1000" sub="версии под сегменты и площадки" color="#0087C8" d={420} />
       </div>
       <div className="grid grid-cols-5 gap-6 mt-14">
         {modalities.map((m, i) => (
@@ -578,11 +613,11 @@ export function SlideBenefits() {
             Эффекты внедрения GenAI в рекламное производство
           </div>
           <div className="space-y-8">
-            <BenefitBar label="Скорость производства креатива" value="×10" w="96%" color="#43c6ae" d={300} />
-            <BenefitBar label="Стоимость продакшена" value="−90%" w="88%" color="#43c6ae" d={420} />
-            <BenefitBar label="Варианты для A/B-тестов" value="×100+" w="80%" color="#f2a93b" d={540} />
-            <BenefitBar label="Глубина персонализации сообщения" value="1:1" w="72%" color="#f2a93b" d={660} />
-            <BenefitBar label="Доступность для малого бизнеса" value="max" w="64%" color="#8ca0b4" d={780} />
+            <BenefitBar label="Скорость производства креатива" value="×10" w="96%" color="#0087C8" d={300} />
+            <BenefitBar label="Стоимость продакшена" value="−90%" w="88%" color="#0087C8" d={420} />
+            <BenefitBar label="Варианты для A/B-тестов" value="×100+" w="80%" color="#003DA6" d={540} />
+            <BenefitBar label="Глубина персонализации сообщения" value="1:1" w="72%" color="#003DA6" d={660} />
+            <BenefitBar label="Доступность для малого бизнеса" value="max" w="64%" color="#7E93AC" d={780} />
           </div>
           <div className="font-mono text-[13px] text-dim tracking-wider mt-9">
             * усреднённые оценки по кейсам агентств, 2024–2025
@@ -596,12 +631,12 @@ export function SlideBenefits() {
 /* ================= 06 · risk map ================= */
 
 export const risks = [
-  { n: "R-01", t: "Обман и дипфейки", d: "Синтетические лица, голоса и «отзывы», неотличимые от реальных", c: "#f0654f", sev: "критический", Icon: IconDeception },
-  { n: "R-02", t: "Манипуляция выбором", d: "Гиперперсонализация, дарк-паттерны, давление на уязвимые состояния", c: "#f0654f", sev: "критический", Icon: IconManipulation },
-  { n: "R-03", t: "Персональные данные", d: "Профилирование, утечки в промпты, согласие без понимания", c: "#f2a93b", sev: "высокий", Icon: IconData },
-  { n: "R-04", t: "Авторское право", d: "Обучение на чужом творчестве, споры о праве на сгенерированное", c: "#f2a93b", sev: "высокий", Icon: IconCopyright },
-  { n: "R-05", t: "Алгоритмическая предвзятость", d: "Стереотипы в креативах и дискриминационный таргетинг", c: "#f2a93b", sev: "высокий", Icon: IconBias },
-  { n: "R-06", t: "Размывание границ", d: "Реклама, неотличимая от журналистики и «живых» людей", c: "#f0654f", sev: "критический", Icon: IconBoundary },
+  { n: "R-01", t: "Обман и дипфейки", d: "Синтетические лица, голоса и «отзывы», неотличимые от реальных", c: "#D64541", sev: "критический", Icon: IconDeception },
+  { n: "R-02", t: "Манипуляция выбором", d: "Гиперперсонализация, дарк-паттерны, давление на уязвимые состояния", c: "#D64541", sev: "критический", Icon: IconManipulation },
+  { n: "R-03", t: "Персональные данные", d: "Профилирование, утечки в промпты, согласие без понимания", c: "#003DA6", sev: "высокий", Icon: IconData },
+  { n: "R-04", t: "Авторское право", d: "Обучение на чужом творчестве, споры о праве на сгенерированное", c: "#003DA6", sev: "высокий", Icon: IconCopyright },
+  { n: "R-05", t: "Алгоритмическая предвзятость", d: "Стереотипы в креативах и дискриминационный таргетинг", c: "#003DA6", sev: "высокий", Icon: IconBias },
+  { n: "R-06", t: "Размывание границ", d: "Реклама, неотличимая от журналистики и «живых» людей", c: "#D64541", sev: "критический", Icon: IconBoundary },
 ];
 
 export function SlideRiskMap() {
@@ -692,7 +727,8 @@ function RiskSlide({
   );
 }
 
-function CaseCard({ label, color = "#f0654f", children }: { label: string; color?: string; children: React.ReactNode }) {
+function CaseCard({ label, color: colorIn = "#f0654f", children }: { label: string; color?: string; children: React.ReactNode }) {
+  const color = brand(colorIn);
   return (
     <div className="anim-pop border border-line bg-ink3/60 relative" style={{ ["--d" as string]: "450ms" }}>
       <div className="px-8 py-4 border-b border-line/80 flex items-center justify-between">
@@ -734,9 +770,9 @@ export function SlideRiskDeception() {
           <div className="flex gap-6 items-center">
             <div className="w-[130px] h-[130px] shrink-0 border-2 border-coral/70 relative overflow-hidden bg-ink2">
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="38" r="16" fill="none" stroke="#8ca0b4" strokeWidth="2.5" />
-                <path d="M20 86c4-18 16-26 30-26s26 8 30 26" fill="none" stroke="#8ca0b4" strokeWidth="2.5" />
-                <path d="M12 12l76 76" stroke="#f0654f" strokeWidth="2" strokeDasharray="5 4" />
+                <circle cx="50" cy="38" r="16" fill="none" stroke="#7E93AC" strokeWidth="2.5" />
+                <path d="M20 86c4-18 16-26 30-26s26 8 30 26" fill="none" stroke="#7E93AC" strokeWidth="2.5" />
+                <path d="M12 12l76 76" stroke="#D64541" strokeWidth="2" strokeDasharray="5 4" />
               </svg>
               <span className="absolute bottom-1 right-1 font-mono text-[10px] text-coral tracking-widest">SYNTH</span>
             </div>
@@ -747,9 +783,9 @@ export function SlideRiskDeception() {
           </div>
           <div className="mt-6 grid grid-cols-3 gap-3 text-center">
             {[
-              ["Риск", "обман", "#f0654f"],
-              ["Ущерб", "репутация + суды", "#f2a93b"],
-              ["Скорость", "минуты", "#8ca0b4"],
+              ["Риск", "обман", "#D64541"],
+              ["Ущерб", "репутация + суды", "#003DA6"],
+              ["Скорость", "минуты", "#7E93AC"],
             ].map(([k, v, c]) => (
               <div key={k} className="border border-line/70 py-3">
                 <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-dim">{k}</div>
@@ -788,10 +824,10 @@ export function SlideRiskManipulation() {
       caseCard={
         <CaseCard label="Механика · воронка давления">
           {[
-            ["01", "данные о поведении", "история, геолокация, ритм дня", "#8ca0b4"],
-            ["02", "психо-профиль", "модель предсказывает триггеры", "#f2a93b"],
-            ["03", "генерация триггера", "креатив под эмоцию момента", "#f0654f"],
-            ["04", "решение на автопилоте", "покупка раньше, чем осмысление", "#f0654f"],
+            ["01", "данные о поведении", "история, геолокация, ритм дня", "#7E93AC"],
+            ["02", "психо-профиль", "модель предсказывает триггеры", "#003DA6"],
+            ["03", "генерация триггера", "креатив под эмоцию момента", "#D64541"],
+            ["04", "решение на автопилоте", "покупка раньше, чем осмысление", "#D64541"],
           ].map(([n, t, s, c], i) => (
             <div key={n} className="flex items-center gap-5 py-3.5">
               <span className="font-display font-bold text-[22px] w-[52px]" style={{ color: c }}>
@@ -841,10 +877,10 @@ export function SlideRiskData() {
           <CaseCard label="Регуляторная рамка" color="#f2a93b">
             <div className="space-y-5">
               {[
-                ["152-ФЗ", "персональные данные в РФ: цель, объём, согласие", "#f2a93b"],
-                ["GDPR", "прозрачность автоматизированных решений и профайлинга", "#43c6ae"],
-                ["Минимизация", "собирать только то, что необходимо для конкретной цели", "#8ca0b4"],
-                ["Privacy by design", "защита данных закладывается в систему, а не прикручивается", "#8ca0b4"],
+                ["152-ФЗ", "персональные данные в РФ: цель, объём, согласие", "#003DA6"],
+                ["GDPR", "прозрачность автоматизированных решений и профайлинга", "#0087C8"],
+                ["Минимизация", "собирать только то, что необходимо для конкретной цели", "#7E93AC"],
+                ["Privacy by design", "защита данных закладывается в систему, а не прикручивается", "#7E93AC"],
               ].map(([t, d, c]) => (
                 <div key={t} className="border-l-[3px] pl-6 py-1" style={{ borderColor: c }}>
                   <div className="font-display font-semibold text-[23px]" style={{ color: c }}>
@@ -871,10 +907,10 @@ export function SlideRiskData() {
 
 export function SlideRiskCopyright() {
   const cases = [
-    ["2023", "The New York Times против OpenAI", "обучение на журналистских текстах без лицензии", "#f0654f"],
-    ["2023–24", "Иски художников к генеративным сервисам", "воспроизведение стиля конкретных авторов", "#f2a93b"],
-    ["2024", "EU AI Act", "обязанность раскрывать данные, на которых обучена модель", "#43c6ae"],
-    ["2025+", "Рекламные споры за «сгенерированное»", "кто владеет креативом: бренд, агентство или вендор модели?", "#8ca0b4"],
+    ["2023", "The New York Times против OpenAI", "обучение на журналистских текстах без лицензии", "#D64541"],
+    ["2023–24", "Иски художников к генеративным сервисам", "воспроизведение стиля конкретных авторов", "#003DA6"],
+    ["2024", "EU AI Act", "обязанность раскрывать данные, на которых обучена модель", "#0087C8"],
+    ["2025+", "Рекламные споры за «сгенерированное»", "кто владеет креативом: бренд, агентство или вендор модели?", "#7E93AC"],
   ];
   return (
     <SlideFrame index={10} kicker="Разбор · R-04" accent="#f2a93b" ghost="R-04">
@@ -932,9 +968,9 @@ export function SlideRiskCopyright() {
 
 export function SlideRiskBias() {
   const bars = [
-    ["Руководители в стоковых AI-образах", "78% мужчины", "78%", "#f0654f"],
-    ["«Идеальная семья» в генерациях", "стереотипные роли", "65%", "#f2a93b"],
-    ["Таргетинг вакансий: STEM-аудитория", "перекос по полу и возрасту", "57%", "#f2a93b"],
+    ["Руководители в стоковых AI-образах", "78% мужчины", "78%", "#D64541"],
+    ["«Идеальная семья» в генерациях", "стереотипные роли", "65%", "#003DA6"],
+    ["Таргетинг вакансий: STEM-аудитория", "перекос по полу и возрасту", "57%", "#003DA6"],
   ];
   return (
     <SlideFrame index={11} kicker="Разбор · R-05" accent="#f2a93b" ghost="R-05">
@@ -1024,12 +1060,12 @@ export function SlideRiskBoundary() {
                 <svg viewBox="0 0 100 100" className="w-full h-full">
                   <defs>
                     <pattern id="px" width="6" height="6" patternUnits="userSpaceOnUse">
-                      <rect width="6" height="6" fill="#16232f" />
-                      <rect width="2.6" height="2.6" x="1" y="1" fill="#f0654f" opacity="0.75" />
+                      <rect width="6" height="6" fill="#DFE9F4" />
+                      <rect width="2.6" height="2.6" x="1" y="1" fill="#D64541" opacity="0.75" />
                     </pattern>
                   </defs>
-                  <circle cx="50" cy="38" r="15" fill="url(#px)" stroke="#f0654f" strokeWidth="1.6" />
-                  <path d="M22 88c4-18 15-25 28-25s24 7 28 25" fill="url(#px)" stroke="#f0654f" strokeWidth="1.6" />
+                  <circle cx="50" cy="38" r="15" fill="url(#px)" stroke="#D64541" strokeWidth="1.6" />
+                  <path d="M22 88c4-18 15-25 28-25s24 7 28 25" fill="url(#px)" stroke="#D64541" strokeWidth="1.6" />
                 </svg>
                 <span className="absolute bottom-1 right-1 font-mono text-[10px] text-coral tracking-widest">AI</span>
               </div>
@@ -1040,9 +1076,9 @@ export function SlideRiskBoundary() {
             </div>
             <div className="mt-6 grid grid-cols-3 gap-3 text-center">
               {[
-                ["Аудитория", "не знает", "#f0654f"],
-                ["Маркировка", "часто нет", "#f2a93b"],
-                ["Ответственный", "не определён", "#8ca0b4"],
+                ["Аудитория", "не знает", "#D64541"],
+                ["Маркировка", "часто нет", "#003DA6"],
+                ["Ответственный", "не определён", "#7E93AC"],
               ].map(([k, v, c]) => (
                 <div key={k} className="border border-line/70 py-3">
                   <div className="font-mono text-[12px] uppercase tracking-[0.18em] text-dim">{k}</div>
@@ -1067,11 +1103,11 @@ export function SlideRiskBoundary() {
 /* ================= 13 · balance ================= */
 
 const principles = [
-  { n: "01", t: "Прозрачность и маркировка", d: "Любой синтетический контент помечается: «создано с помощью ИИ», «виртуальный персонаж».", Icon: IconBoundary, c: "#f2a93b" },
-  { n: "02", t: "Верификация фактов", d: "Рекламные утверждения проходят проверку — автоматическую и человеческую. Здесь работает AUTOFACTCHECK.", Icon: IconShield, c: "#43c6ae" },
-  { n: "03", t: "Согласие и минимизация данных", d: "Персонализация без слежки: только необходимые данные, только с осмысленного согласия.", Icon: IconData, c: "#43c6ae" },
-  { n: "04", t: "Человек в контуре решений", d: "Финальное «да» на публикацию — за человеком; ИИ предлагает, человек отвечает.", Icon: IconScale, c: "#f2a93b" },
-  { n: "05", t: "Саморегулирование и аудит", d: "Кодекс этики Альянса ИИ, EU AI Act, внутренние этические комитеты и регулярный аудит моделей.", Icon: IconSpark, c: "#8ca0b4" },
+  { n: "01", t: "Прозрачность и маркировка", d: "Любой синтетический контент помечается: «создано с помощью ИИ», «виртуальный персонаж».", Icon: IconBoundary, c: "#003DA6" },
+  { n: "02", t: "Верификация фактов", d: "Рекламные утверждения проходят проверку — автоматическую и человеческую. Здесь работает AUTOFACTCHECK.", Icon: IconShield, c: "#0087C8" },
+  { n: "03", t: "Согласие и минимизация данных", d: "Персонализация без слежки: только необходимые данные, только с осмысленного согласия.", Icon: IconData, c: "#0087C8" },
+  { n: "04", t: "Человек в контуре решений", d: "Финальное «да» на публикацию — за человеком; ИИ предлагает, человек отвечает.", Icon: IconScale, c: "#003DA6" },
+  { n: "05", t: "Саморегулирование и аудит", d: "Кодекс этики Альянса ИИ, EU AI Act, внутренние этические комитеты и регулярный аудит моделей.", Icon: IconSpark, c: "#7E93AC" },
 ];
 
 export function SlideBalance() {
@@ -1104,15 +1140,15 @@ export function SlideBalance() {
         </div>
         <div className="w-[560px] shrink-0 pt-2">
           <div className="anim-pop border border-line bg-ink3/60 p-9 relative" style={{ ["--d" as string]: "450ms" }}>
-            <span className="corner-tick tl" style={{ ["--tick-color" as string]: "#43c6ae" }} />
-            <span className="corner-tick br" style={{ ["--tick-color" as string]: "#43c6ae" }} />
+            <span className="corner-tick tl" style={{ ["--tick-color" as string]: "#0087C8" }} />
+            <span className="corner-tick br" style={{ ["--tick-color" as string]: "#0087C8" }} />
             <div className="font-mono text-[14px] tracking-[0.22em] uppercase text-dim">Ориентиры регулирования</div>
             <div className="mt-6 space-y-6">
               {[
-                ["Кодекс этики Альянса ИИ", "Россия, 2021 · 200+ подписантов, этические комиссии", "#43c6ae"],
-                ["EU AI Act", "маркировка дипфейков и прозрачность — с 2026 года", "#f2a93b"],
-                ["Маркировка интернет-рекламы", "РФ: токены ОРД — каждая кампания учтена государством", "#8ca0b4"],
-                ["Политики платформ", "запрет немаркированных дипфейков в рекламных сетях", "#8ca0b4"],
+                ["Кодекс этики Альянса ИИ", "Россия, 2021 · 200+ подписантов, этические комиссии", "#0087C8"],
+                ["EU AI Act", "маркировка дипфейков и прозрачность — с 2026 года", "#003DA6"],
+                ["Маркировка интернет-рекламы", "РФ: токены ОРД — каждая кампания учтена государством", "#7E93AC"],
+                ["Политики платформ", "запрет немаркированных дипфейков в рекламных сетях", "#7E93AC"],
               ].map(([t, d, c]) => (
                 <div key={t} className="border-l-[3px] pl-6" style={{ borderColor: c }}>
                   <div className="font-display font-semibold text-[22px]" style={{ color: c }}>
@@ -1128,10 +1164,10 @@ export function SlideBalance() {
               <div className="font-display font-bold text-[30px] text-coral">РИСК</div>
             </div>
             <svg width="200" height="46" viewBox="0 0 200 46">
-              <line x1="6" y1="23" x2="194" y2="23" stroke="#24364b" strokeWidth="2" />
-              <circle cx="100" cy="23" r="13" fill="#0c141d" stroke="#43c6ae" strokeWidth="2.4" />
-              <circle cx="100" cy="23" r="4.5" fill="#43c6ae" className="pulse-dot" />
-              <path d="M14 16l-8 7 8 7M186 16l8 7-8 7" stroke="#5f7285" strokeWidth="2" fill="none" />
+              <line x1="6" y1="23" x2="194" y2="23" stroke="#C7D7E9" strokeWidth="2" />
+              <circle cx="100" cy="23" r="13" fill="#F8FBFE" stroke="#0087C8" strokeWidth="2.4" />
+              <circle cx="100" cy="23" r="4.5" fill="#0087C8" className="pulse-dot" />
+              <path d="M14 16l-8 7 8 7M186 16l8 7-8 7" stroke="#8095AE" strokeWidth="2" fill="none" />
             </svg>
             <div className="text-center">
               <div className="font-display font-bold text-[30px] text-teal">ПРОГРЕСС</div>
@@ -1214,7 +1250,7 @@ export function SlideSpeakers() {
       <div className="flex gap-10 mt-12">
         <SpeakerCard
           monogram="ЛМ"
-          color="#f2a93b"
+          color="#003DA6"
           name="Макарова Людмила Сергеевна"
           role="Руководитель Центра применения ИИ в журналистике и массовой коммуникации ННГУ им. Н.И. Лобачевского"
           talk="AUTOFACTCHECK: правда по алгоритму — прикладной ИИ в медиа"
@@ -1223,7 +1259,7 @@ export function SlideSpeakers() {
         />
         <SpeakerCard
           monogram="ИП"
-          color="#43c6ae"
+          color="#0087C8"
           name="Померанцев Илья Валерьевич"
           role="Руководитель проектов Центра ИИ ННГУ им. Н.И. Лобачевского, член Комиссии по реализации кодекса этики Альянса ИИ в РФ"
           talk="Этика ИИ в медиа: грань между риском и прогрессом"
@@ -1251,9 +1287,9 @@ export function SlideOutro() {
           <Kicker>Три тезиса на память</Kicker>
           <div className="mt-9 space-y-7">
             {[
-              ["Генеративный ИИ — усилитель.", "Он умножает и возможности, и риски; нейтральных сценариев не бывает.", "#f2a93b"],
-              ["Грань между риском и прогрессом — это ответственность.", "Не технология решает, где обман, а где инновация, а человек и институты.", "#f0654f"],
-              ["Прозрачность и проверка — условие доверия.", "Маркировка, фактчекинг и человеческий контроль делают ИИ союзником медиа и рекламы.", "#43c6ae"],
+              ["Генеративный ИИ — усилитель.", "Он умножает и возможности, и риски; нейтральных сценариев не бывает.", "#003DA6"],
+              ["Грань между риском и прогрессом — это ответственность.", "Не технология решает, где обман, а где инновация, а человек и институты.", "#D64541"],
+              ["Прозрачность и проверка — условие доверия.", "Маркировка, фактчекинг и человеческий контроль делают ИИ союзником медиа и рекламы.", "#0087C8"],
             ].map(([t, d, c], i) => (
               <div key={i} className="anim-left flex gap-6 items-start" style={{ ["--d" as string]: `${150 + i * 150}ms` }}>
                 <span className="font-display font-bold text-[30px] mt-0.5" style={{ color: c }}>
@@ -1289,6 +1325,12 @@ export function SlideOutro() {
               <div className="flex items-center gap-3 font-mono text-[16px] tracking-wider text-amber">
                 <span className="w-2 h-2 bg-amber inline-block" />
                 github.com/veznar/Etica
+              </div>
+              <div className="flex items-center gap-4 pt-4">
+                <EmblemUnn className="w-10 h-10" />
+                <div className="font-mono text-[14px] tracking-[0.16em] uppercase text-muted leading-relaxed">
+                  unn.ru · Университет Лобачевского
+                </div>
               </div>
             </div>
           </div>

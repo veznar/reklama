@@ -34,7 +34,7 @@ export async function exportDeckToPdf(
     const el = slideEls[i];
 
     const canvas = await html2canvas(el, {
-      backgroundColor: "#0c141d",
+      backgroundColor: "#edf3fa",
       scale: 0.75,
       logging: false,
       width: SLIDE_W,

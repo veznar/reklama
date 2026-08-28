@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SLIDES, TOTAL_SLIDES } from "./slides/slides";
 import { exportDeckToPdf, SLIDE_W, SLIDE_H } from "./lib/pdf";
+import { EmblemUnn } from "./components/emblem";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -12,18 +13,18 @@ import {
 
 /* deterministic ambient particles */
 const PARTICLES = [
-  { x: "6%", y: "18%", s: 5, c: "#f2a93b", d: "0s" },
-  { x: "12%", y: "74%", s: 4, c: "#43c6ae", d: "1.2s" },
-  { x: "22%", y: "38%", s: 3, c: "#8ca0b4", d: "2.1s" },
-  { x: "31%", y: "86%", s: 5, c: "#f0654f", d: "0.7s" },
-  { x: "44%", y: "12%", s: 4, c: "#8ca0b4", d: "1.8s" },
-  { x: "58%", y: "22%", s: 3, c: "#f2a93b", d: "0.4s" },
-  { x: "66%", y: "80%", s: 5, c: "#43c6ae", d: "2.4s" },
-  { x: "74%", y: "42%", s: 4, c: "#8ca0b4", d: "1.5s" },
-  { x: "83%", y: "14%", s: 5, c: "#f0654f", d: "0.9s" },
-  { x: "90%", y: "66%", s: 4, c: "#f2a93b", d: "1.1s" },
-  { x: "38%", y: "58%", s: 3, c: "#43c6ae", d: "2.8s" },
-  { x: "94%", y: "36%", s: 3, c: "#8ca0b4", d: "0.2s" },
+  { x: "6%", y: "18%", s: 5, c: "#003DA6", d: "0s" },
+  { x: "12%", y: "74%", s: 4, c: "#0087C8", d: "1.2s" },
+  { x: "22%", y: "38%", s: 3, c: "#7E93AC", d: "2.1s" },
+  { x: "31%", y: "86%", s: 5, c: "#D64541", d: "0.7s" },
+  { x: "44%", y: "12%", s: 4, c: "#7E93AC", d: "1.8s" },
+  { x: "58%", y: "22%", s: 3, c: "#003DA6", d: "0.4s" },
+  { x: "66%", y: "80%", s: 5, c: "#0087C8", d: "2.4s" },
+  { x: "74%", y: "42%", s: 4, c: "#7E93AC", d: "1.5s" },
+  { x: "83%", y: "14%", s: 5, c: "#D64541", d: "0.9s" },
+  { x: "90%", y: "66%", s: 4, c: "#003DA6", d: "1.1s" },
+  { x: "38%", y: "58%", s: 3, c: "#0087C8", d: "2.8s" },
+  { x: "94%", y: "36%", s: 3, c: "#7E93AC", d: "0.2s" },
 ];
 
 type PdfState = { phase: "idle" } | { phase: "working"; done: number; total: number } | { phase: "ok" } | { phase: "err" };
@@ -178,16 +179,13 @@ export default function App() {
       {/* ============ header chrome ============ */}
       <header className="absolute top-0 left-0 right-0 z-30 h-[64px] flex items-center justify-between px-6 border-b border-line/60 bg-ink/80">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-9 h-9 border-2 border-amber flex items-center justify-center shrink-0 relative">
-            <span className="font-display font-extrabold text-[15px] text-amber">Э</span>
-            <span className="absolute -bottom-[5px] -right-[5px] w-2 h-2 bg-coral" />
-          </div>
+          <EmblemUnn className="w-9 h-9 shrink-0" />
           <div className="leading-none min-w-0">
-            <div className="font-display font-bold text-[17px] tracking-wide">
-              ETICA<span className="text-amber">·</span>ННГУ
+            <div className="font-display font-bold text-[15px] tracking-[0.05em] uppercase text-paper">
+              Университет Лобачевского
             </div>
-            <div className="font-mono text-[11px] tracking-[0.18em] uppercase text-dim mt-1 truncate max-w-[420px]">
-              Генеративный ИИ в рекламе · этические риски
+            <div className="font-mono text-[11px] tracking-[0.16em] uppercase text-dim mt-1 truncate max-w-[430px]">
+              ННГУ им. Н. И. Лобачевского · Генеративный ИИ в рекламе
             </div>
           </div>
         </div>
