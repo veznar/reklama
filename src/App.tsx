@@ -1,15 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SLIDES, TOTAL_SLIDES } from "./slides/slides";
-import { exportDeckToPdf, SLIDE_W, SLIDE_H } from "./lib/pdf";
 import { EmblemUnn } from "./components/emblem";
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconDownload,
-  IconGrid,
-  IconCheck,
-  IconPlay,
-} from "./components/icons";
+import { IconArrowLeft, IconArrowRight, IconDownload, IconGrid, IconPlay } from "./components/icons";
+
+/* геометрия слайда, px (16:9) */
+const SLIDE_W = 1920;
+const SLIDE_H = 1080;
 
 /* deterministic ambient particles */
 const PARTICLES = [
@@ -27,18 +23,22 @@ const PARTICLES = [
   { x: "94%", y: "36%", s: 3, c: "#7E93AC", d: "0.2s" },
 ];
 
-type PdfState = { phase: "idle" } | { phase: "working"; done: number; total: number } | { phase: "ok" } | { phase: "err" };
-
 export default function App() {
   const [active, setActive] = useState(0);
   const [overview, setOverview] = useState(false);
-  const [pdf, setPdf] = useState<PdfState>({ phase: "idle" });
+  const [printHint, setPrintHint] = useState(false);
   const [scale, setScale] = useState(0.4);
   const [vp, setVp] = useState({ w: 1280, h: 800 });
   const rootRef = useRef<HTMLDivElement>(null);
-  const pdfStageRef = useRef<HTMLDivElement>(null);
   const wheelLock = useRef(0);
   const touchX = useRef<number | null>(null);
+
+  /* подсказка гаснет, когда диалог печати закрыт */
+  useEffect(() => {
+    const hide = () => setPrintHint(false);
+    window.addEventListener("afterprint", hide);
+    return () => window.removeEventListener("afterprint", hide);
+  }, []);
 
   const go = useCallback((i: number) => {
     setActive(Math.max(0, Math.min(TOTAL_SLIDES - 1, i)));
@@ -120,18 +120,10 @@ export default function App() {
     }
   };
 
-  /* pdf export */
-  const onDownload = async () => {
-    if (pdf.phase === "working" || !pdfStageRef.current) return;
-    setPdf({ phase: "working", done: 0, total: TOTAL_SLIDES });
-    try {
-      await exportDeckToPdf(pdfStageRef.current, (done, total) => setPdf({ phase: "working", done, total }));
-      setPdf({ phase: "ok" });
-    } catch (err) {
-      console.error(err);
-      setPdf({ phase: "err" });
-    }
-    setTimeout(() => setPdf({ phase: "idle" }), 2600);
+  /* машиночитаемый PDF: печать → «Сохранить как PDF» (настоящий текстовый слой) */
+  const onDownload = () => {
+    setPrintHint(true);
+    window.setTimeout(() => window.print(), 60);
   };
 
   const ActiveSlide = useMemo(() => SLIDES[active].Component, [active]);
@@ -144,7 +136,7 @@ export default function App() {
   return (
     <div
       ref={rootRef}
-      className="relative w-screen h-screen overflow-hidden bg-ink text-paper select-none"
+      className="deck-root relative w-screen h-screen overflow-hidden bg-ink text-paper select-none"
       onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
       onTouchEnd={(e) => {
         if (touchX.current === null) return;
@@ -224,32 +216,10 @@ export default function App() {
           </button>
           <button
             onClick={onDownload}
-            disabled={pdf.phase === "working"}
-            className={`btn-chrome flex items-center gap-2.5 px-5 h-10 border font-mono text-[13px] tracking-[0.12em] uppercase cursor-pointer ${
-              pdf.phase === "ok"
-                ? "border-teal text-teal bg-teal/10"
-                : pdf.phase === "err"
-                  ? "border-coral text-coral bg-coral/10"
-                  : "border-amber text-ink bg-amber hover:bg-amber2 font-semibold"
-            }`}
-            title="Сохранить всю презентацию в PDF"
+            className="btn-chrome flex items-center gap-2.5 px-5 h-10 border border-amber text-ink bg-amber hover:bg-amber2 font-semibold font-mono text-[13px] tracking-[0.12em] uppercase cursor-pointer"
+            title="Сохранить всю презентацию в машиночитаемый PDF"
           >
-            {pdf.phase === "working" ? (
-              <>
-                <span className="w-3.5 h-3.5 border-2 border-ink/30 border-t-ink rounded-full animate-spin" />
-                {pdf.done}/{pdf.total}
-              </>
-            ) : pdf.phase === "ok" ? (
-              <>
-                <IconCheck className="w-4 h-4" /> Сохранено
-              </>
-            ) : pdf.phase === "err" ? (
-              "Ошибка — ещё раз"
-            ) : (
-              <>
-                <IconDownload className="w-4 h-4" /> Скачать PDF
-              </>
-            )}
+            <IconDownload className="w-4 h-4" /> Скачать PDF
           </button>
         </div>
       </header>
@@ -368,30 +338,18 @@ export default function App() {
         </div>
       )}
 
-      {/* ============ pdf working overlay ============ */}
-      {pdf.phase === "working" && (
-        <div className="absolute inset-0 z-50 bg-ink/90 flex items-center justify-center">
-          <div className="border border-line bg-ink2 px-14 py-12 text-center relative">
-            <span className="corner-tick tl" />
-            <span className="corner-tick br" />
-            <div className="w-12 h-12 mx-auto border-[3px] border-line border-t-amber rounded-full animate-spin" />
-            <div className="font-display font-bold uppercase text-[22px] mt-7">Формируем PDF…</div>
-            <div className="font-mono text-[14px] tracking-[0.18em] uppercase text-muted mt-3">
-              Слайд {pdf.done} / {pdf.total}
-            </div>
-            <div className="w-[300px] h-[5px] bg-line/50 mt-6 overflow-hidden">
-              <div
-                className="h-full bg-amber transition-all duration-200"
-                style={{ width: `${(pdf.done / pdf.total) * 100}%` }}
-              />
-            </div>
+      {/* ============ подсказка перед диалогом печати ============ */}
+      {printHint && (
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50 border border-amber bg-ink2 px-6 py-4 shadow-[0_10px_36px_rgba(11,45,92,0.18)]">
+          <div className="font-mono text-[13px] tracking-[0.14em] uppercase text-paper whitespace-nowrap">
+            В диалоге выберите <span className="text-amber font-semibold">«Сохранить как PDF»</span> — текст остаётся машиночитаемым
           </div>
         </div>
       )}
 
-      {/* ============ offscreen pdf stage (full-fidelity 1920×1080) ============ */}
-      <div ref={pdfStageRef} className="pdf-stage" data-pdf-stage aria-hidden>
-        {SLIDES.map((s, i) => (
+      {/* ============ печатная сцена: все слайды 1920×1080 ============ */}
+      <div className="print-deck" aria-hidden>
+        {SLIDES.map((s) => (
           <div key={s.id} data-pdf-slide style={{ width: SLIDE_W, height: SLIDE_H }}>
             <s.Component />
           </div>

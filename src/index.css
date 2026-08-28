@@ -137,143 +137,18 @@ body {
   border-right: 3px solid var(--tick-color, #003da6);
 }
 
-/* ---------- keyframes ---------- */
+/* ---------- статичная вёрстка (анимации отключены) ---------- */
+/* Классы entrance-анимаций сохранены в разметке, но рендерятся
+   сразу в финальном состоянии — без движения и задержек. */
 
-@keyframes lineMask {
-  from {
-    transform: translateY(112%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-26px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(26px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes drawLine {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-@keyframes floaty {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-9px);
-  }
-}
-@keyframes tickerScroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-@keyframes spinSlow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-@keyframes spinSlowRev {
-  from {
-    transform: rotate(360deg);
-  }
-  to {
-    transform: rotate(0deg);
-  }
-}
-@keyframes dashFlow {
-  to {
-    stroke-dashoffset: -240;
-  }
-}
-@keyframes pulseDot {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.8);
-  }
-}
-
-/* ---------- animation utilities ---------- */
-
-.anim-rise {
-  animation: fadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-.anim-in {
-  animation: fadeIn 0.7s ease both;
-  animation-delay: var(--d, 0ms);
-}
-.anim-left {
-  animation: slideInLeft 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-.anim-right {
-  animation: slideInRight 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
-}
+.anim-rise,
+.anim-in,
+.anim-left,
+.anim-right,
 .anim-pop {
-  animation: popIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
+  animation: none;
+  opacity: 1;
+  transform: none;
 }
 
 .line-mask {
@@ -284,67 +159,54 @@ body {
 }
 .line-mask > .line-inner {
   display: block;
-  animation: lineMask 0.85s cubic-bezier(0.22, 0.9, 0.24, 1) both;
-  animation-delay: var(--d, 0ms);
+  animation: none;
+  transform: none;
 }
 
 .rule-draw {
   transform-origin: left center;
-  animation: drawLine 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
+  animation: none;
+  transform: none;
 }
 
 .ticker-track {
-  animation: tickerScroll 32s linear infinite;
+  animation: none;
+  transform: none;
 }
 
-.spin-slow {
-  animation: spinSlow 30s linear infinite;
-}
+.spin-slow,
 .spin-slow-rev {
-  animation: spinSlowRev 24s linear infinite;
+  animation: none;
 }
 
 .dash-flow {
   stroke-dasharray: 6 8;
-  animation: dashFlow 9s linear infinite;
+  animation: none;
 }
 
-.floaty {
-  animation: floaty 5.5s ease-in-out infinite;
-}
-
+.floaty,
 .pulse-dot {
-  animation: pulseDot 2s ease-in-out infinite;
+  animation: none;
 }
 
+/* обратная связь на наведение — только цвет/граница, без движения */
 .tile-thumb {
-  transition:
-    transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
-    border-color 0.2s ease;
+  transition: border-color 0.18s ease;
 }
 .tile-thumb:hover {
-  transform: translateY(-4px);
   border-color: var(--c-amber);
 }
 
 .btn-chrome {
   transition:
-    color 0.18s ease,
-    background-color 0.18s ease,
-    border-color 0.18s ease,
-    transform 0.18s ease;
-}
-.btn-chrome:hover {
-  transform: translateY(-1px);
-}
-.btn-chrome:active {
-  transform: translateY(0);
+    color 0.15s ease,
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
-/* ---------- PDF export ---------- */
+/* ---------- печатная сцена (машиночитаемый PDF) ---------- */
 
-.pdf-stage {
+.print-deck {
   position: fixed;
   left: -100000px;
   top: 0;
@@ -352,30 +214,73 @@ body {
   pointer-events: none;
   background: var(--c-ink);
 }
-.pdf-stage [data-pdf-slide] {
+.print-deck [data-pdf-slide] {
   position: absolute;
   top: 0;
   left: 0;
   overflow: hidden;
 }
 
-/* В PDF-сцене всё должно быть в финальном (видимом) состоянии:
-   анимации при клонировании документа перезапускаются и элементы
-   с задержкой попадают в кадр прозрачными. Фиксируем статику. */
-.pdf-stage,
-.pdf-stage *,
-.pdf-stage *::before,
-.pdf-stage *::after {
-  animation: none !important;
-  transition: none !important;
+/* ---------- печать → PDF ---------- */
+/* Кнопка «Скачать PDF» вызывает диалог печати; браузер сохраняет
+   документ как PDF с настоящим текстовым слоем (текст можно
+   выделять, копировать и искать). Каждый слайд — отдельная
+   страница 16:9. */
+
+@page {
+  size: 1920px 1080px;
+  margin: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+@media print {
+  html,
+  body,
+  #root {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+
+  /* скрываем весь экранный интерфейс, оставляем только слайды */
+  .deck-root {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+  .deck-root > *:not(.print-deck) {
+    display: none !important;
+  }
+
+  .print-deck {
+    position: static !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: auto !important;
+    display: block !important;
+    width: auto !important;
+    background: #ffffff !important;
+  }
+  .print-deck [data-pdf-slide] {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    break-after: page;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .print-deck [data-pdf-slide]:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  /* точная передача фирменных цветов и фонов */
+  .slide-frame,
+  .slide-frame *,
+  .slide-frame *::before,
+  .slide-frame *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
