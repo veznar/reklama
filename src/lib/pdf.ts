@@ -37,6 +37,10 @@ export async function exportDeckToPdf(
       backgroundColor: "#edf3fa",
       scale: 0.75,
       logging: false,
+      x: 0,
+      y: 0,
+      scrollX: 0,
+      scrollY: 0,
       width: SLIDE_W,
       height: SLIDE_H,
       windowWidth: SLIDE_W + 200,
@@ -52,10 +56,23 @@ export async function exportDeckToPdf(
           stage.style.visibility = "visible";
           stage.style.transform = "none";
         }
+
+        // в клоне все CSS-анимации перезапускаются: элементы с entrance-
+        // задержками (anim-rise / line-mask / rule-draw) остались бы
+        // прозрачными в кадре. Замораживаем всё в финальном состоянии.
+        const freeze = doc.createElement("style");
+        freeze.textContent = [
+          "*, *::before, *::after { animation: none !important; transition: none !important; }",
+          ".line-mask > .line-inner { transform: none !important; opacity: 1 !important; }",
+          ".rule-draw { transform: none !important; }",
+          ".ticker-track { transform: none !important; }",
+          ".anim-rise, .anim-in, .anim-left, .anim-right, .anim-pop { opacity: 1 !important; transform: none !important; }",
+        ].join("\n");
+        doc.head.appendChild(freeze);
       },
     });
 
-    const img = canvas.toDataURL("image/jpeg", 0.9);
+    const img = canvas.toDataURL("image/jpeg", 0.92);
 
     if (i > 0) {
       pdf.addPage([SLIDE_W, SLIDE_H], "landscape");

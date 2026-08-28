@@ -359,6 +359,17 @@ body {
   overflow: hidden;
 }
 
+/* В PDF-сцене всё должно быть в финальном (видимом) состоянии:
+   анимации при клонировании документа перезапускаются и элементы
+   с задержкой попадают в кадр прозрачными. Фиксируем статику. */
+.pdf-stage,
+.pdf-stage *,
+.pdf-stage *::before,
+.pdf-stage *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
