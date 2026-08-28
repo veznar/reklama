@@ -1,0 +1,381 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Unbounded", "Golos Text", sans-serif;
+  --font-body: "Golos Text", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Фирменная палитра: Университет Лобачевского (ННГУ) */
+  --c-ink: #edf3fa; /* фон страницы */
+  --c-ink2: #ffffff; /* поверхности */
+  --c-ink3: #dfe9f4; /* панели */
+  --c-paper: #0b2d5c; /* основной текст, глубокий синий */
+  --c-muted: #40608c; /* приглушённый текст */
+  --c-dim: #8095ae; /* подписи */
+  --c-line: #c7d7e9; /* линии и сетки */
+  --c-amber: #003da6; /* фирменный синий */
+  --c-amber2: #0a55c4; /* фирменный синий · hover */
+  --c-teal: #0087c8; /* фирменный голубой */
+  --c-teal2: #55bce8; /* фирменный голубой · светлый */
+  --c-coral: #d64541; /* сигнальный красный · риски */
+  --c-coral2: #ee7a72;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--c-ink);
+  color: var(--c-paper);
+  font-family: var(--font-body);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--c-amber);
+  color: #ffffff;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-line) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--c-line);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- слайд-рамка ---------- */
+
+.slide-frame {
+  position: relative;
+  background:
+    radial-gradient(1000px 640px at 90% -12%, rgba(0, 135, 200, 0.1), transparent 62%),
+    radial-gradient(900px 620px at -6% 110%, rgba(0, 61, 166, 0.09), transparent 60%),
+    linear-gradient(155deg, #f8fbfe 0%, #edf3fa 52%, #e4edf7 100%);
+}
+
+/* фирменная полоса бренда вверху каждого слайда */
+.slide-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  z-index: 5;
+  background: linear-gradient(90deg, #003da6 0%, #003da6 80%, #0087c8 80%, #55bce8 100%);
+}
+
+/* ---------- ambient layers ---------- */
+
+.bg-blueprint {
+  background-image:
+    linear-gradient(rgba(0, 61, 166, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 61, 166, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 45%, black 35%, transparent 80%);
+  mask-image: radial-gradient(ellipse at 50% 45%, black 35%, transparent 80%);
+}
+
+.bg-glow-amber {
+  background: radial-gradient(900px 620px at 12% 8%, rgba(0, 61, 166, 0.13), transparent 65%);
+}
+
+.bg-glow-teal {
+  background: radial-gradient(1000px 700px at 88% 90%, rgba(0, 135, 200, 0.13), transparent 65%);
+}
+
+.bg-noise {
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+/* ---------- micro-interactions ---------- */
+
+.corner-tick {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  z-index: 2;
+}
+.corner-tick.tl {
+  top: 26px;
+  left: 26px;
+  border-top: 3px solid var(--tick-color, #003da6);
+  border-left: 3px solid var(--tick-color, #003da6);
+}
+.corner-tick.tr {
+  top: 26px;
+  right: 26px;
+  border-top: 3px solid var(--tick-color, #003da6);
+  border-right: 3px solid var(--tick-color, #003da6);
+}
+.corner-tick.bl {
+  bottom: 26px;
+  left: 26px;
+  border-bottom: 3px solid var(--tick-color, #003da6);
+  border-left: 3px solid var(--tick-color, #003da6);
+}
+.corner-tick.br {
+  bottom: 26px;
+  right: 26px;
+  border-bottom: 3px solid var(--tick-color, #003da6);
+  border-right: 3px solid var(--tick-color, #003da6);
+}
+
+/* ---------- keyframes ---------- */
+
+@keyframes lineMask {
+  from {
+    transform: translateY(112%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes drawLine {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+@keyframes tickerScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spinSlowRev {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+/* ---------- animation utilities ---------- */
+
+.anim-rise {
+  animation: fadeUp 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.anim-in {
+  animation: fadeIn 0.7s ease both;
+  animation-delay: var(--d, 0ms);
+}
+.anim-left {
+  animation: slideInLeft 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.anim-right {
+  animation: slideInRight 0.65s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.anim-pop {
+  animation: popIn 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+.line-mask > .line-inner {
+  display: block;
+  animation: lineMask 0.85s cubic-bezier(0.22, 0.9, 0.24, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.rule-draw {
+  transform-origin: left center;
+  animation: drawLine 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+.ticker-track {
+  animation: tickerScroll 32s linear infinite;
+}
+
+.spin-slow {
+  animation: spinSlow 30s linear infinite;
+}
+.spin-slow-rev {
+  animation: spinSlowRev 24s linear infinite;
+}
+
+.dash-flow {
+  stroke-dasharray: 6 8;
+  animation: dashFlow 9s linear infinite;
+}
+
+.floaty {
+  animation: floaty 5.5s ease-in-out infinite;
+}
+
+.pulse-dot {
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+.tile-thumb {
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.2s ease;
+}
+.tile-thumb:hover {
+  transform: translateY(-4px);
+  border-color: var(--c-amber);
+}
+
+.btn-chrome {
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+.btn-chrome:hover {
+  transform: translateY(-1px);
+}
+.btn-chrome:active {
+  transform: translateY(0);
+}
+
+/* ---------- PDF export ---------- */
+
+.pdf-stage {
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--c-ink);
+}
+.pdf-stage [data-pdf-slide] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/* В PDF-сцене всё должно быть в финальном (видимом) состоянии:
+   анимации при клонировании документа перезапускаются и элементы
+   с задержкой попадают в кадр прозрачными. Фиксируем статику. */
+.pdf-stage,
+.pdf-stage *,
+.pdf-stage *::before,
+.pdf-stage *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
